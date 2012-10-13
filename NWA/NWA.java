@@ -27,6 +27,8 @@ public class NWA extends JFrame {
 	JPanel sequenceInputs;
 	private static final long serialVersionUID = 1L;
 	final String allowedLetters = "aAcCgGtT";
+	JPanel panel = new JPanel();
+    GridBagConstraints constraints = new GridBagConstraints();
 
 	public NWA() {
 		banner = new JLabel("Enter two DNA sequences and press align");
@@ -48,8 +50,6 @@ public class NWA extends JFrame {
 		sequenceInputs.setLayout(new BoxLayout(sequenceInputs, BoxLayout.Y_AXIS));
 		sequenceInputs.add(sequenceAInput);
 		sequenceInputs.add(sequenceBInput);
-		gridPanel = new JPanel();
-		gridPanel.setLayout(new GridLayout(4,4,4,4));
 		quit = new JButton("quit");
         quit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -65,25 +65,20 @@ public class NWA extends JFrame {
         		align();
         	}
         });
-		JPanel panel = new JPanel();
-		panel.setLayout(new GridBagLayout());
-	    GridBagConstraints c = new GridBagConstraints();
-	    c.fill = GridBagConstraints.BOTH;
-	    c.gridx = 0;
-	    c.gridy = 0;
-	    panel.add(banner, c);
-	    c.gridx = 5;
-	    c.gridy = 0;
-		panel.add(sequenceInputs, c);
-		c.gridx = -4;
-		c.gridy = 1;
-		panel.add(gridPanel, c);
-		c.gridx = 0;
-		c.gridy = 3;
-		panel.add(align, c);
-		c.gridx = 5;
-		c.gridy = 3;
-		panel.add(quit,c);
+    	panel.setLayout(new GridBagLayout());
+        constraints.fill = GridBagConstraints.BOTH;
+        constraints.gridx = 0;
+        constraints.gridy = 0;
+	    panel.add(banner, constraints);
+	    constraints.gridx = 5;
+	    constraints.gridy = 0;
+		panel.add(sequenceInputs, constraints);
+		constraints.gridx = 0;
+		constraints.gridy = 3;
+		panel.add(align, constraints);
+		constraints.gridx = 5;
+		constraints.gridy = 3;
+		panel.add(quit,constraints);
 		this.setContentPane(panel);
 		this.pack();
 		this.setTitle("Needleman-Wunsch Algorithm");
@@ -132,6 +127,9 @@ public class NWA extends JFrame {
 		int lengthOfA = sequenceA.length();
 		int lengthOfB = sequenceB.length();
 		
+		gridPanel = new JPanel();
+		gridPanel.setLayout(new GridLayout(lengthOfA+1,lengthOfB+1,4,4));
+		
 		int differenceInLength = Math.abs(lengthOfA - lengthOfB);
 		if (differenceInLength > 5) {
 			int answer = JOptionPane.showConfirmDialog(null, "Your strings differ by " + differenceInLength +
@@ -140,12 +138,22 @@ public class NWA extends JFrame {
 				//align
 				System.out.println("Proceeding");
 				
-				int[][] score = new int[lengthOfA][lengthOfB];
-				
-				
-				
-				
-				
+				int[][] score = new int[lengthOfA+1][lengthOfB+1];
+				for (int i = 0; i < lengthOfA+1; i++) {
+					score[i][0] = i;
+				}
+				for (int i = 0; i < lengthOfB+1; i++) {
+					score[0][i] = i;
+				}
+				JLabel score00 = new JLabel((Integer.toString(score[0][0])));
+				gridPanel.add(score00);
+				JLabel score01 = new JLabel((Integer.toString(score[0][1])));
+				gridPanel.add(score01);
+				constraints.gridx = 2;
+				constraints.gridy = 2;
+				panel.add(gridPanel, constraints);
+				panel.doLayout();
+
 			} else {
 				;
 				// Do nothing this time

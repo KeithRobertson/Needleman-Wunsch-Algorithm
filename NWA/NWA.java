@@ -20,36 +20,69 @@ public class NWA extends JFrame {
 	
 	JTextField sequenceAInput;
 	JTextField sequenceBInput;
+	JTextField bonusInput;
+	JTextField penaltyInput;
 	JPanel gridPanel;
 	JButton quit;
 	JButton align;
 	JLabel banner;
+	JLabel paramsLabel;
 	JPanel sequenceInputs;
+	JPanel paramsInputs;
 	private static final long serialVersionUID = 1L;
 	final String allowedLetters = "aAcCgGtT";
+	final String numbers = "0123456789";
 	JPanel panel = new JPanel();
     GridBagConstraints constraints = new GridBagConstraints();
+    int lengthOfA;
+    int lengthOfB;
+    int bonus = 2;
+    int penalty = 1;
+    String sequenceA;
+    String sequenceB;
 
 	public NWA() {
-		banner = new JLabel("Enter two DNA sequences and press align");
+		banner = new JLabel("Enter two DNA sequences and press align  ");
+		
 		sequenceAInput = new JTextField("", 15);
 		sequenceAInput.addKeyListener(new KeyAdapter() {
 			public void keyTyped(KeyEvent e) {
 				char c = e.getKeyChar();
-				textProcessing(c, e);
+				textProcessing(c, e, allowedLetters);
 			}
 		});
+		
+		paramsLabel = new JLabel("Choose weights for bonus and penalty");
+		
 		sequenceBInput = new JTextField("", 15);
 		sequenceBInput.addKeyListener(new KeyAdapter() {
 			public void keyTyped(KeyEvent e) {
 				char c= e.getKeyChar();
-				textProcessing(c, e);
+				textProcessing(c, e, allowedLetters);
 			}
 		});
+		
+		bonusInput = new JTextField("2", 5);
+		bonusInput.addKeyListener(new KeyAdapter() {
+			public void keyTyped(KeyEvent e) {
+				char c = e.getKeyChar();
+				textProcessing(c,e, numbers);
+			}
+		});
+		
+		penaltyInput = new JTextField("1", 5);
+		penaltyInput.addKeyListener(new KeyAdapter() {
+			public void keyTyped(KeyEvent e) {
+				char c = e.getKeyChar();
+				textProcessing(c,e, numbers);
+			}
+		});
+		
 		sequenceInputs = new JPanel();
 		sequenceInputs.setLayout(new BoxLayout(sequenceInputs, BoxLayout.Y_AXIS));
 		sequenceInputs.add(sequenceAInput);
 		sequenceInputs.add(sequenceBInput);
+		
 		quit = new JButton("quit");
         quit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -59,10 +92,17 @@ public class NWA extends JFrame {
 				}
             }
         });     
+        
+        paramsInputs = new JPanel();
+        paramsInputs.setLayout(new BoxLayout(paramsInputs, BoxLayout.Y_AXIS));
+        paramsInputs.add(bonusInput);
+        paramsInputs.add(penaltyInput);
+        
+        
         align = new JButton("Align");
         align.addActionListener(new ActionListener() {
         	public void actionPerformed(ActionEvent e) {
-        		align();
+        		prepareAlignment();
         	}
         });
     	panel.setLayout(new GridBagLayout());
@@ -73,6 +113,12 @@ public class NWA extends JFrame {
 	    constraints.gridx = 5;
 	    constraints.gridy = 0;
 		panel.add(sequenceInputs, constraints);
+		constraints.gridx = 0;
+		constraints.gridy = 1;
+		panel.add(paramsLabel, constraints);
+		constraints.gridx = 5;
+		constraints.gridy = 1;
+		panel.add(paramsInputs, constraints);
 		constraints.gridx = 0;
 		constraints.gridy = 3;
 		panel.add(align, constraints);
@@ -91,13 +137,15 @@ public class NWA extends JFrame {
 	 * @param c the character typed in to the textField box
 	 * @param e the KeyEvent started by a key being typed 
 	 */
-	public void textProcessing(char c, KeyEvent e){
-		if (!(contains(c) ||
+	public void textProcessing(char c, KeyEvent e, String checker) {
+		if (!(contains(c, checker) ||
 				(c == KeyEvent.VK_BACK_SPACE) ||
 				(c == KeyEvent.VK_DELETE))) {
 				e.consume();
 			}
 	}
+	
+
 	
 	
 	/**
@@ -105,9 +153,9 @@ public class NWA extends JFrame {
 	 * @param c character to be checked against allowedLetters
 	 * @return whether c is in allowedLetters
 	 */
-	public boolean contains(char c) {
-		for (int i = 0; i < allowedLetters.length(); i++){
-			if ( allowedLetters.charAt(i) == c) {
+	public boolean contains(char c, String checker) {
+		for (int i = 0; i < checker.length(); i++){
+			if ( checker.charAt(i) == c) {
 				return true;
 			}
 		}
@@ -117,15 +165,18 @@ public class NWA extends JFrame {
 	/**
 	 * The function where the actual algorithm takes place
 	 */
-	public void align() {
+	public void prepareAlignment() {
 		System.out.println("A: " + sequenceAInput.getText());
 		System.out.println("B: " + sequenceBInput.getText());
 		
-		String sequenceA = sequenceAInput.getText();
-		String sequenceB = sequenceBInput.getText();
+		sequenceA = " " + sequenceAInput.getText();
+		sequenceB = " " + sequenceBInput.getText();
 		
-		int lengthOfA = sequenceA.length();
-		int lengthOfB = sequenceB.length();
+		lengthOfA = sequenceA.length();
+		lengthOfB = sequenceB.length();
+		
+		bonus = Integer.parseInt(bonusInput.getText());
+		penalty = Integer.parseInt(penaltyInput.getText());
 		
 		gridPanel = new JPanel();
 		gridPanel.setLayout(new GridLayout(lengthOfA+1,lengthOfB+1,4,4));
@@ -135,33 +186,50 @@ public class NWA extends JFrame {
 			int answer = JOptionPane.showConfirmDialog(null, "Your strings differ by " + differenceInLength +
 					", are you sure you wish to proceed?", "Verification", JOptionPane.YES_NO_OPTION);
 			if (answer == 0) {
-				//align
-				System.out.println("Proceeding");
-				
-				int[][] score = new int[lengthOfA+1][lengthOfB+1];
-				for (int i = 0; i < lengthOfA+1; i++) {
-					score[i][0] = i;
-				}
-				for (int i = 0; i < lengthOfB+1; i++) {
-					score[0][i] = i;
-				}
-				JLabel score00 = new JLabel((Integer.toString(score[0][0])));
-				gridPanel.add(score00);
-				JLabel score01 = new JLabel((Integer.toString(score[0][1])));
-				gridPanel.add(score01);
-				constraints.gridx = 2;
-				constraints.gridy = 2;
-				panel.add(gridPanel, constraints);
-				panel.doLayout();
+				align();
 
 			} else {
 				;
-				// Do nothing this time
+			}
+		} else {
+			align();
+		}
+	}
+	
+	public void align() {
+		
+		int[][] score = new int[lengthOfA][lengthOfB];
+		for (int i = 0; i < lengthOfA; i++) {
+			for (int j = 0; j < lengthOfB; j++) {
+				if (j == 0) {
+					score[i][j] = 0 - i;
+				}else if (i == 0) {
+					score[i][j] = 0 - j;
+				}else {
+					score[i][j] = Math.max(match(sequenceA.charAt(i-1),sequenceB.charAt(j-1),score[i-1][j-1]),
+							Math.max(score[i-1][j] - penalty,
+									score[i][j-1] - penalty));
+				}
+				gridPanel.add(new JLabel(Integer.toString(score[i][j])));
 			}
 		}
+
 		
 		
+		constraints.gridx = 2;
+		constraints.gridy = 2;
 		
+		panel.add(gridPanel, constraints);
+		this.pack();
+
+	}
+	
+	public int match(char a, char b, int score) {
+		if ( a == b) {
+			return score + bonus;
+		} else {
+			return score - penalty;
+		}
 	}
 	
 }

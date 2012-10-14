@@ -40,7 +40,8 @@ public class NWA extends JFrame {
     int penalty = 1;
     String sequenceA;
     String sequenceB;
-
+    boolean exists;
+    
 	public NWA() {
 		banner = new JLabel("Enter two DNA sequences and press align  ");
 		
@@ -166,11 +167,16 @@ public class NWA extends JFrame {
 	 * The function where the actual algorithm takes place
 	 */
 	public void prepareAlignment() {
+		
+		if (exists) {
+			gridPanel.removeAll();
+		}
+
 		System.out.println("A: " + sequenceAInput.getText());
 		System.out.println("B: " + sequenceBInput.getText());
 		
-		sequenceA = "  " + sequenceAInput.getText();
-		sequenceB = "  " + sequenceBInput.getText();
+		sequenceA = "  " + sequenceAInput.getText().toUpperCase();
+		sequenceB = "  " + sequenceBInput.getText().toUpperCase();
 		
 		lengthOfA = sequenceA.length();
 		lengthOfB = sequenceB.length();
@@ -224,8 +230,8 @@ public class NWA extends JFrame {
 		
 		constraints.gridx = 2;
 		constraints.gridy = 2;
-		
 		panel.add(gridPanel, constraints);
+		exists = true;
 		this.pack();
 
 	}

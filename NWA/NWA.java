@@ -169,8 +169,8 @@ public class NWA extends JFrame {
 		System.out.println("A: " + sequenceAInput.getText());
 		System.out.println("B: " + sequenceBInput.getText());
 		
-		sequenceA = " " + sequenceAInput.getText();
-		sequenceB = " " + sequenceBInput.getText();
+		sequenceA = "  " + sequenceAInput.getText();
+		sequenceB = "  " + sequenceBInput.getText();
 		
 		lengthOfA = sequenceA.length();
 		lengthOfB = sequenceB.length();
@@ -179,7 +179,7 @@ public class NWA extends JFrame {
 		penalty = Integer.parseInt(penaltyInput.getText());
 		
 		gridPanel = new JPanel();
-		gridPanel.setLayout(new GridLayout(lengthOfA,lengthOfB,5,5));
+		gridPanel.setLayout(new GridLayout(lengthOfA+1, lengthOfB+1,5,5));
 		
 		int differenceInLength = Math.abs(lengthOfA - lengthOfB);
 		if (differenceInLength > 5) {
@@ -197,15 +197,21 @@ public class NWA extends JFrame {
 	}
 	
 	public void align() {
-		
+			
 		int[][] score = new int[lengthOfA][lengthOfB];
 		for (int i = 0; i < lengthOfA; i++) {
 			for (int j = 0; j < lengthOfB; j++) {
 				if (j == 0) {
-					score[i][j] = 0 - i;
-				}else if (i == 0) {
-					score[i][j] = 0 - j;
-				}else {
+					gridPanel.add(new JLabel(sequenceA.substring(i,i+1)));
+					continue;
+				} else if (i == 0) {
+					gridPanel.add(new JLabel(sequenceB.substring(j,j+1)));
+					continue;
+				} else if (j == 1) {
+					score[i][j] = 1 - i;
+				} else if ( i == 1) {
+					score[i][j] = 1 - j;					
+				} else {
 					score[i][j] = Math.max(match(sequenceA.charAt(i),sequenceB.charAt(j),score[i-1][j-1]),
 							Math.max(score[i-1][j] - penalty,
 									score[i][j-1] - penalty));
@@ -223,7 +229,7 @@ public class NWA extends JFrame {
 		this.pack();
 
 	}
-	
+
 	public int match(char a, char b, int score) {	
 		if ( a == b && a != ' ') {
 			return score + bonus;

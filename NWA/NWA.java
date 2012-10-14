@@ -179,7 +179,7 @@ public class NWA extends JFrame {
 		penalty = Integer.parseInt(penaltyInput.getText());
 		
 		gridPanel = new JPanel();
-		gridPanel.setLayout(new GridLayout(lengthOfA+1,lengthOfB+1,4,4));
+		gridPanel.setLayout(new GridLayout(lengthOfA,lengthOfB,5,5));
 		
 		int differenceInLength = Math.abs(lengthOfA - lengthOfB);
 		if (differenceInLength > 5) {
@@ -206,7 +206,7 @@ public class NWA extends JFrame {
 				}else if (i == 0) {
 					score[i][j] = 0 - j;
 				}else {
-					score[i][j] = Math.max(match(sequenceA.charAt(i-1),sequenceB.charAt(j-1),score[i-1][j-1]),
+					score[i][j] = Math.max(match(sequenceA.charAt(i),sequenceB.charAt(j),score[i-1][j-1]),
 							Math.max(score[i-1][j] - penalty,
 									score[i][j-1] - penalty));
 				}
@@ -224,8 +224,8 @@ public class NWA extends JFrame {
 
 	}
 	
-	public int match(char a, char b, int score) {
-		if ( a == b) {
+	public int match(char a, char b, int score) {	
+		if ( a == b && a != ' ') {
 			return score + bonus;
 		} else {
 			return score - penalty;

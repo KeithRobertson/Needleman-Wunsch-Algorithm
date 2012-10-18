@@ -131,7 +131,6 @@ public class NWA extends JFrame {
 		this.pack();
 		this.setTitle("Needleman-Wunsch Algorithm");
 		this.setResizable(true);
-		// this.setSize(800,600);
 	}
 
 	/**
@@ -169,7 +168,6 @@ public class NWA extends JFrame {
 	 * The function where the actual algorithm takes place
 	 */
 	public void prepareAlignment() {
-
 		if (exists) {
 			gridPanel.removeAll();
 		}
@@ -261,7 +259,7 @@ public class NWA extends JFrame {
 	}
 
 	public int match(char a, char b, int score) {
-		if (a == b && a != ' ') {
+		if ((a == b) && (a != ' ')) {
 			return score + bonus;
 		} else {
 			return score - penalty;

@@ -14,7 +14,10 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
+import javax.swing.text.AbstractDocument;
 public class NWA extends JFrame {
 
 	JTextField sequenceAInput;
@@ -43,8 +46,12 @@ public class NWA extends JFrame {
 
 	public NWA() {
 		banner = new JLabel("Enter two DNA sequences and press align  ");
+		
+	    DocumentFilter filter = new UppercaseDocumentFilter();
 
 		sequenceAInput = new JTextField("", 15);
+	    ((AbstractDocument) sequenceAInput.getDocument()).setDocumentFilter(
+	    		filter);
 		sequenceAInput.addKeyListener(new KeyAdapter() {
 			public void keyTyped(KeyEvent e) {
 				char c = e.getKeyChar();
@@ -55,6 +62,8 @@ public class NWA extends JFrame {
 		paramsLabel = new JLabel("Choose weights for bonus and penalty");
 
 		sequenceBInput = new JTextField("", 15);
+	    ((AbstractDocument) sequenceBInput.getDocument()).setDocumentFilter(
+	    		filter);
 		sequenceBInput.addKeyListener(new KeyAdapter() {
 			public void keyTyped(KeyEvent e) {
 				char c = e.getKeyChar();
@@ -131,7 +140,6 @@ public class NWA extends JFrame {
 		this.pack();
 		this.setTitle("Needleman-Wunsch Algorithm");
 		this.setResizable(true);
-		// this.setSize(800,600);
 	}
 
 	/**
@@ -269,3 +277,16 @@ public class NWA extends JFrame {
 	}
 
 }
+
+class UppercaseDocumentFilter extends DocumentFilter {
+	  public void insertString(DocumentFilter.FilterBypass fb, int offset, String text,
+	      AttributeSet attr) throws BadLocationException {
+	    fb.insertString(offset, text.toUpperCase(), attr);
+	  }
+
+	  public void replace(DocumentFilter.FilterBypass fb, int offset, int length, String text,
+	      AttributeSet attrs) throws BadLocationException {
+
+	    fb.replace(offset, length, text.toUpperCase(), attrs);
+	  }
+	} 

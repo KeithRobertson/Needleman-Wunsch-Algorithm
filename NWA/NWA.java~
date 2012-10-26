@@ -71,7 +71,7 @@ public class NWA extends JFrame {
 			}
 		});
 
-		bonusInput = new JTextField("2");
+		bonusInput = new JTextField("2", 5);
 		bonusInput.addKeyListener(new KeyAdapter() {
 			public void keyTyped(KeyEvent e) {
 				char c = e.getKeyChar();
@@ -79,7 +79,7 @@ public class NWA extends JFrame {
 			}
 		});
 
-		penaltyInput = new JTextField("1");
+		penaltyInput = new JTextField("1", 5);
 		penaltyInput.addKeyListener(new KeyAdapter() {
 			public void keyTyped(KeyEvent e) {
 				char c = e.getKeyChar();
